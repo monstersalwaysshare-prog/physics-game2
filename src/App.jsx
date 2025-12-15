@@ -1,4 +1,4 @@
-// 11V try upload to GitHub again
+// 12 shuffle scanrio
 // 10V3_A is a revert version cause V3 might had an error didn't detect, want to use this to redo-GitHub
 //      select 10 cards still 42, it worked. i will copy it as V11 and try GitHub again
 // 10V3 — "final page" everything I can see now except no sound when new scenario, 
@@ -20,6 +20,46 @@ function App()
       ? scenariosData.scenarios
       : [];
 
+      
+  //⭐ v12 random select senario
+  const [deck] = useState(
+    function ()
+    {
+      if (scenarios.length === 0)
+      {
+        return [];
+      }
+
+      // Build the full deck in the original order
+      const built = buildDeckFromScenarios(scenarios);
+
+      // Group cards by scenarioId so cards from the same scenario stay together
+      const byScenario = new Map();
+
+      for (const entry of built)
+      {
+        const existing = byScenario.get(entry.scenarioId) || [];
+        existing.push(entry);
+        byScenario.set(entry.scenarioId, existing);
+      }
+
+      const scenarioChunks = Array.from(byScenario.values());
+
+      // Shuffle the scenario chunks (Fisher–Yates)
+      for (let i = scenarioChunks.length - 1; i > 0; i--)
+      {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = scenarioChunks[i];
+        scenarioChunks[i] = scenarioChunks[j];
+        scenarioChunks[j] = temp;
+      }
+
+      // Flatten back into one deck
+      return scenarioChunks.flat();
+    }
+  );
+
+  /*
   const [deck] = useState(
     function ()
     {
@@ -31,6 +71,7 @@ function App()
       return buildDeckFromScenarios(scenarios);
     }
   );
+  */
 
   const [cardIndex, setCardIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -165,7 +206,7 @@ function App()
     width: "86%",
     borderRadius: 12,
     padding: 16,
-    // ⭐ more see-through so the Fizz logo shows
+    //  ⭐more see-through so the Fizz logo shows
     backgroundColor: theme === "dark"
       ? "rgba(0,0,0,0.35)"
       : "rgba(255,255,255,0.55)",
